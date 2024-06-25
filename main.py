@@ -1,5 +1,6 @@
 import time
-from graph import Graph, measure_time
+from src.scripts.verifyGraph import Graph
+from src.scripts.measureTime import measure_time
 from file_reader import read_graph_from_file
 
 def main():
