@@ -45,6 +45,17 @@ def dfs(v, visitados, vertices):                            # Função DFS padr�
         if not visitados[vizinho]:
             dfs(vizinho, visitados, vertices)
             
-            
+def bfs(v, visitados, vertices):                            # Função BFS padronizada, também pode aceitar um callback, caso necessário
+    fila = [v]  
+    visitados[v] = True
+    
+    while fila:
+        atual = fila.pop(0)
+        
+        for vizinho in vertices[atual]:
+            if not visitados[vizinho]:
+                visitados[vizinho] = True
+                fila.append(vizinho)
+
 
 
