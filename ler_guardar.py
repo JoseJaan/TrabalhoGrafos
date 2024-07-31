@@ -57,5 +57,22 @@ def bfs(v, visitados, vertices):                            # Função BFS padro
                 visitados[vizinho] = True
                 fila.append(vizinho)
 
+def verify_conexo(quantidade_vertices, vertices):
+    visitados = [False] * (quantidade_vertices + 1)         # Starta os visitados para usar a DFS
+       
+    for v in range(1, quantidade_vertices + 1):             # Achar o primeiro vértice que tenha arestas
+        if len(vertices[v]) > 0:
+            primeiro_vertice = v
+            break
+    else:                                                   # Caso não existam arestas o grafo não tem como ser conexo, retornando False
+        return False
+
+    dfs(primeiro_vertice, visitados, vertices)              # Chamada da DFS com os params obtidos acima
+
+    for v in range(1, quantidade_vertices + 1):             
+        if len(vertices[v]) > 0 and not visitados[v]:       # Garante que não temos nenhum grafo com arestas que não foi verificado
+            return False                                    # Double check de cria
+
+    return True                                             # Retorna que o grafo é conexo
 
 
