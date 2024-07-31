@@ -38,3 +38,13 @@ if(not is_direcionado):
 
 
 print(matriz_adjacencia)
+
+def dfs(v, visitados, vertices):                            # Função DFS padrão, poderíamos adicionar uma callback de parâmetro
+    visitados[v] = True                                     #  def dfs(v, visitados, vertices, callback = none) já que funções 
+    for vizinho in vertices[v]:                             # futuras podem precisar -> acredito eu                                            -> Sim gabriel ela foi feita com GPT <-
+        if not visitados[vizinho]:
+            dfs(vizinho, visitados, vertices)
+            
+            
+
+
