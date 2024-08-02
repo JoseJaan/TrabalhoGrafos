@@ -65,7 +65,7 @@ def verify_conexo(quantidade_vertices, vertices):
             primeiro_vertice = v
             break
     else:                                                   # Caso não existam arestas o grafo não tem como ser conexo, retornando False
-        return False
+        return False    
 
     dfs(primeiro_vertice, visitados, vertices)              # Chamada da DFS com os params obtidos acima
 
@@ -75,6 +75,29 @@ def verify_conexo(quantidade_vertices, vertices):
 
     return True                                             # Retorna que o grafo é conexo
 
+def dfs_cycle(v, visitados, vertices, pai):
+    #o vertice é marcado como visitado                            
+    visitados[v] = True                                    
+    for vizinho in vertices[v]:
+        #para cada vizinho roda o dfs                             
+        if not visitados[vizinho]:
+            if dfs_cycle(vizinho, visitados, vertices, v):
+                return True
+        #se o vizinho já visitado for o pai, não tem problema
+        elif vizinho != pai:
+            return True
+    return False
+
+def verify_cycle(vertices):
+    visitados = [False] * (quantidade_vertices + 1)         
+
+    for v in range(1, quantidade_vertices + 1):           
+        if not visitados[v]:
+            if dfs_cycle(v, visitados, vertices, -1): #inicial nao tem pai
+                return True
+        return False
+    
+print(f"Possui ciclo: {verify_cycle(vertices)}")
 
 def verify_bipartido(quantidade_vertices, vertices):        # teoria -> grafo bipartido é um conjunto de vértices em que o grupo V não se                   
                                                             # conecta com o grupo U, usando cores para diferenciar os mesmos     cores:   U -> 0  V -> 1
