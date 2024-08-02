@@ -41,7 +41,7 @@ print(matriz_adjacencia)
 
 def dfs(v, visitados, vertices):                            # Função DFS padrão, poderíamos adicionar uma callback de parâmetro
     visitados[v] = True                                     #  def dfs(v, visitados, vertices, callback = none) já que funções 
-    for vizinho in vertices[v]:                             # futuras podem precisar -> acredito eu                                            -> Sim gabriel ela foi feita com GPT <-
+    for vizinho in vertices[v]:                             # futuras podem precisar -> acredito eu         
         if not visitados[vizinho]:
             dfs(vizinho, visitados, vertices)
             
@@ -75,4 +75,29 @@ def verify_conexo(quantidade_vertices, vertices):
 
     return True                                             # Retorna que o grafo é conexo
 
+
+def verify_bipartido(quantidade_vertices, vertices):        # teoria -> grafo bipartido é um conjunto de vértices em que o grupo V não se                   
+                                                            # conecta com o grupo U, usando cores para diferenciar os mesmos     cores:   U -> 0  V -> 1
+    
+    cores = [-1] * (quantidade_vertices + 1)                # -1 é a ausência de cor, deixando os vértices marcados como não coloridos
+    
+    for i in range(1, quantidade_vertices + 1):             # percorre todo mundo até achar um -1 com arestas
+        if cores[i] == -1 and len(vertices[i]) > 0:         
+            fila = [i]
+            cores[i] = 0                                    # começa a colorir com 0
+            
+            while fila:                                     # enquanto houver algo na fila mantendo-a 'true'
+                u = fila.pop(0)                             # vai tirando um vértice dela com o pop
+                
+                for v in vertices[u]:
+                    if cores[v] == -1:                      # se o vértice não foi colorido
+                        cores[v] = 1 - cores[u]             # colore com a cor oposta de U transformando ele em V
+                        fila.append(v)
+                    elif cores[v] == cores[u]:              # se o vértice adjacente tem a mesma cor o grafo não é bipartido
+                        return False
+    return True
+
+# Testing thiz shit
+print(verify_conexo(quantidade_vertices, vertices)) 
+print(verify_bipartido(quantidade_vertices, vertices))
 
