@@ -96,8 +96,6 @@ def verify_cycle(vertices):
             if dfs_cycle(v, visitados, vertices, -1): #inicial nao tem pai
                 return True
         return False
-    
-print(f"Possui ciclo: {verify_cycle(vertices)}")
 
 def verify_bipartido(quantidade_vertices, vertices):        # teoria -> grafo bipartido é um conjunto de vértices em que o grupo V não se                   
                                                             # conecta com o grupo U, usando cores para diferenciar os mesmos     cores:   U -> 0  V -> 1
@@ -131,10 +129,33 @@ def is_euleriano(vertices):
     
     return True
 
-
+def detecta_pontes(vertices):
+    
+    pontes = []
+    for aresta in arestas:
+        id_aresta, ligacao_v1, ligacao_v2, peso = aresta.split()
+        
+        ligacao_v1 = int(ligacao_v1)
+        ligacao_v2 = int(ligacao_v2)
+        
+        vertices[ligacao_v1].remove(ligacao_v2)
+        vertices[ligacao_v2].remove(ligacao_v1)
+        
+        if not verify_conexo(quantidade_vertices, vertices):
+            pontes.append(id_aresta)    
+        
+        vertices[ligacao_v1].append(ligacao_v2)
+        vertices[ligacao_v2].append(ligacao_v1)
+    
+    return pontes
 
 # Testing thiz shit
-print(verify_conexo(quantidade_vertices, vertices)) 
-print(verify_bipartido(quantidade_vertices, vertices))
-print(is_euleriano(vertices))
+print(f"Conexo: {verify_conexo(quantidade_vertices, vertices)}") 
+print(f"Possui ciclo: {verify_cycle(vertices)}")
+print(f"Bipartido: {verify_bipartido(quantidade_vertices, vertices)}")
+print(f"Euleriano: {is_euleriano(vertices)}")
+print(f"Pontes: {detecta_pontes(vertices)}")
+
+
+
 
