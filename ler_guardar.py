@@ -120,7 +120,21 @@ def verify_bipartido(quantidade_vertices, vertices):        # teoria -> grafo bi
                         return False
     return True
 
+def is_euleriano(vertices):
+
+    if(not verify_conexo(quantidade_vertices,vertices)):
+        return False
+
+    for i in range(len(vertices)):
+        if(len(vertices[i]) % 2 != 0):
+            return False
+    
+    return True
+
+
+
 # Testing thiz shit
 print(verify_conexo(quantidade_vertices, vertices)) 
 print(verify_bipartido(quantidade_vertices, vertices))
+print(is_euleriano(vertices))
 
