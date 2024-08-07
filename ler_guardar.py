@@ -149,13 +149,42 @@ def detecta_pontes(vertices):
     
     return pontes
 
+def dfs_articulacao(v, visitados, low, disc, pai, articulacoes, tempo):
+    filhos = 0                                                                   # Inicializa o número de filhos do vértice atual
+    visitados[v] = True                                                          # Marca o vértice como visitado
+    disc[v] = low[v] = tempo[0]                                                  # Define o tempo de descoberta e o valor low para o vértice atual
+    tempo[0] += 1                                                                # Incrementa o tempo global
+
+    for vizinho in vertices[v]:                                                  # Percorre todos os vértices adjacentes ao vértice atual
+        if not visitados[vizinho]:                                               # Se o vizinho ainda não foi visitado
+            filhos += 1                                                          # Incrementa o contador de filhos
+            dfs_articulacao(vizinho, visitados, low, disc, v, articulacoes, tempo)  # Realiza a chamada recursiva para o vizinho
+            low[v] = min(low[v], low[vizinho])                                   # Atualiza o valor low do vértice atual
+            if pai is None and filhos > 1:                                       # Se o vértice atual é a raiz e tem mais de um filho, é uma articulação
+                articulacoes.add(v)
+            if pai is not None and low[vizinho] >= disc[v]:                      # Se o vértice atual não é a raiz e o valor low do vizinho é maior ou igual ao tempo de descoberta do vértice atual
+                articulacoes.add(v)
+        elif vizinho != pai:                                                     # Se o vizinho não é o pai do vértice atual
+            low[v] = min(low[v], disc[vizinho])                                  # Atualiza o valor low do vértice atual
+
+def list_articula(vertices):
+    quantidade_vertices = len(vertices) - 1                                      # Obtém a quantidade de vértices no grafo
+    visitados = [False] * (quantidade_vertices + 1)                              # Inicializa a lista de visitados
+    disc = [float('inf')] * (quantidade_vertices + 1)                            # Inicializa a lista de tempos de descoberta
+    low = [float('inf')] * (quantidade_vertices + 1)                             # Inicializa a lista de valores low
+    articulacoes = set()                                                         # Inicializa o conjunto de articulações
+    tempo = [0]                                                                  # Inicializa o tempo global
+    
+    for i in range(1, quantidade_vertices + 1):                                  # Percorre todos os vértices do grafo
+        if not visitados[i]:                                                     # Se o vértice ainda não foi visitado
+            dfs_articulacao(i, visitados, low, disc, None, articulacoes, tempo)  # Realiza a DFS para encontrar articulações
+    
+    return sorted(list(articulacoes))                                            # Retorna a lista de articulações ordenada
+
 # Testing thiz shit
 print(f"Conexo: {verify_conexo(quantidade_vertices, vertices)}") 
 print(f"Possui ciclo: {verify_cycle(vertices)}")
 print(f"Bipartido: {verify_bipartido(quantidade_vertices, vertices)}")
 print(f"Euleriano: {is_euleriano(vertices)}")
 print(f"Pontes: {detecta_pontes(vertices)}")
-
-
-
-
+print(f"Vértices de articulação: {list_articula(vertices)}")
