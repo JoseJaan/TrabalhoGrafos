@@ -59,7 +59,7 @@ def bfs(v, visitados, vertices):                            # Função BFS padro
 
 def verify_conexo(quantidade_vertices, vertices):
     visitados = [False] * (quantidade_vertices + 1)         # Starta os visitados para usar a DFS
-       
+
     for v in range(1, quantidade_vertices + 1):             # Achar o primeiro vértice que tenha arestas
         if len(vertices[v]) > 0:
             primeiro_vertice = v
@@ -68,9 +68,8 @@ def verify_conexo(quantidade_vertices, vertices):
         return False    
 
     dfs(primeiro_vertice, visitados, vertices)              # Chamada da DFS com os params obtidos acima
-
-    for v in range(1, quantidade_vertices + 1):             
-        if len(vertices[v]) > 0 and not visitados[v]:       # Garante que não temos nenhum grafo com arestas que não foi verificado
+    for v in range(0, quantidade_vertices):           
+        if len(vertices[v]) >= 0 and not visitados[v]:       # Garante que não temos nenhum grafo com arestas que não foi verificado
             return False                                    # Double check de cria
 
     return True                                             # Retorna que o grafo é conexo
@@ -130,7 +129,9 @@ def is_euleriano(vertices):
     return True
 
 def detecta_pontes(vertices):
-    
+    #Remove uma aresta
+    #Verifica se continua conexo
+    #Retorna aresta pro grafo
     pontes = []
     for aresta in arestas:
         id_aresta, ligacao_v1, ligacao_v2, peso = aresta.split()
