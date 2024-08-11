@@ -148,6 +148,7 @@ def detecta_pontes(vertices):
     
     #Para cada componente do grafo, verifica as arestas dentro dela
     for v in range(1, quantidade_vertices + 1):
+        #Se o vértice não foi visitado, cria uma nova componente e visita os vértices dela
         if not visitados[v] and len(vertices[v]) > 0:
             componente = []
             componente_conexa(v, visitados, componente)
@@ -157,7 +158,8 @@ def detecta_pontes(vertices):
                 
                 ligacao_v1 = int(ligacao_v1)
                 ligacao_v2 = int(ligacao_v2)
-                
+                #Verifica se os vértices pertencem à componente que está sendo analisada
+                #Se pertencem, remove as arestas, verifica se a componente continua conexa e retorna as arestas
                 if ligacao_v1 in componente and ligacao_v2 in componente:
                     vertices[ligacao_v1].remove(ligacao_v2)
                     vertices[ligacao_v2].remove(ligacao_v1)
@@ -165,7 +167,7 @@ def detecta_pontes(vertices):
                     visitados_comp = [False] * (quantidade_vertices + 1)
                     dfs(componente[0], visitados_comp, vertices)
 
-                    #Verificar se algum vertice na componente nao foi visitado
+                    #Se algum vértice nao foi encontrado, a aresta removida é uma ponte
                     if any(not visitados_comp[u] for u in componente):
                         pontes.append(id_aresta)    
                     
