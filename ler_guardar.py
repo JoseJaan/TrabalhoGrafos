@@ -132,22 +132,46 @@ def detecta_pontes(vertices):
     #Remove uma aresta
     #Verifica se continua conexo
     #Retorna aresta pro grafo
-    pontes = []
-    for aresta in arestas:
-        id_aresta, ligacao_v1, ligacao_v2, peso = aresta.split()
-        
-        ligacao_v1 = int(ligacao_v1)
-        ligacao_v2 = int(ligacao_v2)
-        
-        vertices[ligacao_v1].remove(ligacao_v2)
-        vertices[ligacao_v2].remove(ligacao_v1)
-        
-        if not verify_conexo(quantidade_vertices, vertices):
-            pontes.append(id_aresta)    
-        
-        vertices[ligacao_v1].append(ligacao_v2)
-        vertices[ligacao_v2].append(ligacao_v1)
     
+    #Uma dfs para cada componente
+    def componente_conexa(v, visitados, componente):
+        visitados[v] = True
+        componente.append(v)
+        for vizinho in vertices[v]:
+            if not visitados[vizinho]:
+                componente_conexa(vizinho, visitados, componente)
+
+    pontes = []
+
+    
+    visitados = [False] * (quantidade_vertices + 1)
+    
+    #Para cada componente do grafo, verifica as arestas dentro dela
+    for v in range(1, quantidade_vertices + 1):
+        if not visitados[v] and len(vertices[v]) > 0:
+            componente = []
+            componente_conexa(v, visitados, componente)
+
+            for aresta in arestas:
+                id_aresta, ligacao_v1, ligacao_v2, peso = aresta.split()
+                
+                ligacao_v1 = int(ligacao_v1)
+                ligacao_v2 = int(ligacao_v2)
+                
+                if ligacao_v1 in componente and ligacao_v2 in componente:
+                    vertices[ligacao_v1].remove(ligacao_v2)
+                    vertices[ligacao_v2].remove(ligacao_v1)
+
+                    visitados_comp = [False] * (quantidade_vertices + 1)
+                    dfs(componente[0], visitados_comp, vertices)
+
+                    #Verificar se algum vertice na componente nao foi visitado
+                    if any(not visitados_comp[u] for u in componente):
+                        pontes.append(id_aresta)    
+                    
+                    vertices[ligacao_v1].append(ligacao_v2)
+                    vertices[ligacao_v2].append(ligacao_v1)
+
     return pontes
 
 def dfs_articulacao(v, visitados, low, disc, pai, articulacoes, tempo):
