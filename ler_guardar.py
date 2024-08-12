@@ -10,7 +10,12 @@ if( is_direcionado == "nao_direcionado"):
 if(is_direcionado == "direcionado"):
     is_direcionado = True
 
+
 vertices = [[] for _ in range(quantidade_vertices)]
+
+
+grau_entrada = [0 for _ in range(quantidade_vertices)]
+grau_saida = [0 for _ in range(quantidade_vertices)]
 
 arestas = list()
 
@@ -22,7 +27,10 @@ for aresta in arestas:
     ligacao_v1 = int(aresta[2])
     ligacao_v2 = int(aresta[4])
     vertices[ligacao_v1].append(ligacao_v2)
-    vertices[ligacao_v2].append(ligacao_v1)
+    grau_saida[ligacao_v1] += 1
+    grau_entrada[ligacao_v2] += 1
+    if(not is_direcionado):
+        vertices[ligacao_v2].append(ligacao_v1)
 
 
 matriz_adjacencia = [[] for _ in range(quantidade_vertices)]
@@ -38,7 +46,10 @@ if(not is_direcionado):
         ligacao_v2 = int(aresta[4])
         peso = int(aresta[6])
         matriz_adjacencia[ligacao_v1][ligacao_v2] = peso
-        matriz_adjacencia[ligacao_v2][ligacao_v1] = peso
+        if(not is_direcionado):
+            matriz_adjacencia[ligacao_v2][ligacao_v1] = peso
+
+lista_adjacencia = vertices
 
 
 def dfs(v, visitados, vertices):                            # Função DFS padrão, poderíamos adicionar uma callback de parâmetro
@@ -210,7 +221,78 @@ def list_articula(vertices):
     
     return sorted(list(articulacoes))    
 
-print(vertices)                                        # Retorna a lista de articulações ordenada
+
+vertices = list()
+
+for i in range(quantidade_vertices):
+    vertices.append({"vertice":i,"cor": "branco", "filho": None, "tf":0, "ti":0, "lista_adjacencia": lista_adjacencia[i]})
+
+
+
+def dfsVisita(vertice,tempo):
+    tempo += 1
+    vertice["ti"] = tempo
+    vertice["cor"] = "cinza"
+    for vizinho in vertice["lista_adjacencia"]:
+        if vertices[vizinho]["cor"] == "branco":
+            vertice["filho"] = vizinho
+            tempo = dfsVisita(vertices[vizinho],tempo);
+    vertice["cor"] = "preto"
+    tempo += 1
+    vertice["tf"] = tempo
+
+    return tempo
+
+
+
+def dfs(vertices):
+    tempo = 0
+    for vertice in vertices:
+        if vertice["cor"] == "branco":
+            dfsVisita(vertice,tempo)
+
+def dfsOrdTop(vertices):
+    if((not is_direcionado) and (not verify_cycle(vertices))):
+        return []
+    tempo = 0
+    for key,vertice in enumerate(vertices):
+        if (vertice["cor"] == "branco") and (grau_entrada[key] == 0): #verifica se não tem arestas chegando
+            dfsVisita(vertice,tempo)
+    ordenacao = sorted(vertices, key=lambda vertice: vertice["tf"],reverse=True)
+    return ordenacao
+
+
+componentes = list()
+
+
+def dfsConexoVisita(vertice,tempo,componente):
+    componente.append(vertice["vertice"])
+    tempo += 1
+    vertice["ti"] = tempo
+    vertice["cor"] = "cinza"
+    for vizinho in vertice["lista_adjacencia"]:
+        if vertices[vizinho]["cor"] == "branco":
+            vertice["filho"] = vizinho
+            tempo = dfsConexoVisita(vertices[vizinho],tempo,componente);
+    vertice["cor"] = "preto"
+    tempo += 1
+    vertice["tf"] = tempo
+
+    return tempo
+
+
+def dfsConexo(vertices):
+    tempo = 0
+    chave = 0
+    for vertice in vertices:
+        if vertice["cor"] == "branco":
+            componentes.append([])
+            print(componentes)
+            print(chave)
+            dfsConexoVisita(vertice,tempo,componentes[chave])
+            chave += 1
+    return componentes
+
 
 # Testing thiz shit
 print(f"Conexo: {verify_conexo(quantidade_vertices, vertices)}") 
