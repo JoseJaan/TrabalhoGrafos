@@ -294,10 +294,44 @@ def dfsConexo(vertices):
     return componentes
 
 
+def trilha_euleriana(vertices):
+    trilha = []
+    pilha = []
+    
+    # adiciona os vertices que possuem arestas numa pilha
+    for i in range(len(vertices)):
+        if len(vertices[i]["lista_adjacencia"]) > 0:
+            pilha.append(i)
+            break
+    
+    while pilha:
+        # pega o último elemento da pilha
+        v = pilha[-1]
+        
+        if vertices[v]["lista_adjacencia"]:
+            # ordena para ficar na ordem lexográfica
+            vertices[v]["lista_adjacencia"].sort()
+            # remove o vértice adjacente de menor valor e o adiciona na pilha
+            u = vertices[v]["lista_adjacencia"].pop(0)
+            vertices[u]["lista_adjacencia"].remove(v)
+            pilha.append(u)
+        else:
+            # se não possui mais arestas não percorridas, adiciona na trilha
+            trilha.append(pilha.pop())
+
+    # retorna na ordem
+    return trilha[::-1]
+
+
 # Testing thiz shit
-print(f"Conexo: {verify_conexo(quantidade_vertices, vertices)}") 
-print(f"Possui ciclo: {verify_cycle(vertices)}")
-print(f"Bipartido: {verify_bipartido(quantidade_vertices, vertices)}")
-print(f"Euleriano: {is_euleriano(vertices)}")
-print(f"Pontes: {detecta_pontes(vertices)}")
-print(f"Vértices de articulação: {list_articula(vertices)}")
+#print(f"Conexo: {verify_conexo(quantidade_vertices, vertices)}") 
+#print(f"Possui ciclo: {verify_cycle(vertices)}")
+#print(f"Bipartido: {verify_bipartido(quantidade_vertices, vertices)}")
+#print(f"Euleriano: {is_euleriano(vertices)}")
+#print(f"Pontes: {detecta_pontes(vertices)}")
+#print(f"Vértices de articulação: {list_articula(vertices)}")
+trilha = trilha_euleriana(vertices)
+if(trilha):
+    print(f"Trilha euleriana: {trilha}")
+else:
+    print("O grafo nao possui uma trilha euleriana")
