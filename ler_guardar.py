@@ -1,18 +1,22 @@
-with open("teste.txt",'r') as arquivo:
-    entrada = arquivo.readlines()
+arestas_vertices = input()
 
-quantidade_vertices = int(entrada[0][0])
+quantidade_vertices = int(arestas_vertices[0])
+quantidade_arestas = int(arestas_vertices[2])
 
-is_direcionado = bool()
-if(entrada[1] == "nao_direcionado"):
+is_direcionado = input()
+
+if( is_direcionado == "nao_direcionado"):
     is_direcionado = False
-if(entrada[0] == "direcionado"):
+if(is_direcionado == "direcionado"):
     is_direcionado = True
 
+vertices = [[] for _ in range(quantidade_vertices)]
 
-vertices = [[] for _ in range(quantidade_vertices+1)]
+arestas = list()
 
-arestas = entrada[2:]
+for x in range(quantidade_arestas):
+    arestas.append(input())
+
 
 for aresta in arestas:
     ligacao_v1 = int(aresta[2])
@@ -21,10 +25,10 @@ for aresta in arestas:
     vertices[ligacao_v2].append(ligacao_v1)
 
 
-matriz_adjacencia = [[] for _ in range(quantidade_vertices+1)]
+matriz_adjacencia = [[] for _ in range(quantidade_vertices)]
 
 for linha in matriz_adjacencia:
-    for x in range(quantidade_vertices+1):
+    for x in range(quantidade_vertices):
         linha.append(0)
 
 
@@ -36,8 +40,6 @@ if(not is_direcionado):
         matriz_adjacencia[ligacao_v1][ligacao_v2] = peso
         matriz_adjacencia[ligacao_v2][ligacao_v1] = peso
 
-
-print(matriz_adjacencia)
 
 def dfs(v, visitados, vertices):                            # Função DFS padrão, poderíamos adicionar uma callback de parâmetro
     visitados[v] = True                                     #  def dfs(v, visitados, vertices, callback = none) já que funções 
@@ -147,7 +149,7 @@ def detecta_pontes(vertices):
     visitados = [False] * (quantidade_vertices + 1)
     
     #Para cada componente do grafo, verifica as arestas dentro dela
-    for v in range(1, quantidade_vertices + 1):
+    for v in range(1, quantidade_vertices):
         #Se o vértice não foi visitado, cria uma nova componente e visita os vértices dela
         if not visitados[v] and len(vertices[v]) > 0:
             componente = []
@@ -206,7 +208,9 @@ def list_articula(vertices):
         if not visitados[i]:                                                     # Se o vértice ainda não foi visitado
             dfs_articulacao(i, visitados, low, disc, None, articulacoes, tempo)  # Realiza a DFS para encontrar articulações
     
-    return sorted(list(articulacoes))                                            # Retorna a lista de articulações ordenada
+    return sorted(list(articulacoes))    
+
+print(vertices)                                        # Retorna a lista de articulações ordenada
 
 # Testing thiz shit
 print(f"Conexo: {verify_conexo(quantidade_vertices, vertices)}") 
