@@ -55,6 +55,75 @@ def verify_conexo(adj_list, quantidade_vertices):
                                                          # Verificar se todos os vértices foram visitados
     return all(visited)                                  # Retorna True se todos os vértices foram visitados, indicando que o grafo é conexo
 
+# Função para encontrar a árvore mínima
+def minTree(quantidade_vertices, adj_list, is_direcionado):
+    if not is_direcionado:
+        return _kruskal_minTree_neg(quantidade_vertices, adj_list)
+    else:
+        return _bellman_ford_minTree(quantidade_vertices, adj_list, 0)  # Raiz assumida como o vértice 0
+
+# Função interna para Kruskal modificado (grafos não direcionados com pesos negativos)
+def _kruskal_minTree_neg(quantidade_vertices, adj_list):
+    parent = list(range(quantidade_vertices))
+    rank = [0] * quantidade_vertices
+
+    def find(v):
+        if parent[v] != v:
+            parent[v] = find(parent[v])
+        return parent[v]
+
+    def union(v1, v2):
+        root1 = find(v1)
+        root2 = find(v2)
+        if root1 != root2:
+            if rank[root1] > rank[root2]:
+                parent[root2] = root1
+            elif rank[root1] < rank[root2]:
+                parent[root1] = root2
+            else:
+                parent[root2] = root1
+                rank[root1] += 1
+
+    edges = []
+    for u in range(quantidade_vertices):
+        for v, weight in adj_list[u]:
+            edges.append((weight, u, v))
+
+    edges.sort()
+
+    min_tree = []
+    for weight, u, v in edges:
+        if find(u) != find(v):
+            union(u, v)
+            min_tree.append((u, v, weight))
+
+    return min_tree
+
+# Função interna para Bellman-Ford (grafos direcionados com pesos negativos)
+def _bellman_ford_minTree(quantidade_vertices, adj_list, root):
+    distances = [float('inf')] * quantidade_vertices
+    pred = [-1] * quantidade_vertices
+    distances[root] = 0
+
+    for _ in range(quantidade_vertices - 1):
+        for u in range(quantidade_vertices):
+            for v, weight in adj_list[u]:
+                if distances[u] != float('inf') and distances[u] + weight < distances[v]:
+                    distances[v] = distances[u] + weight
+                    pred[v] = u
+
+    for u in range(quantidade_vertices):
+        for v, weight in adj_list[u]:
+            if distances[u] != float('inf') and distances[u] + weight < distances[v]:
+                raise ValueError("Grafo contém ciclo negativo.")
+
+    min_tree = []
+    for v in range(quantidade_vertices):
+        if v != root and pred[v] != -1:
+            min_tree.append((pred[v], v, distances[v] - distances[pred[v]]))
+
+    return min_tree
+
 # Função DFS para encontrar vértices de articulação
 def dfs_joints(u, parent, visited, discovery, low, articulation_points, time, adj_list):
     children = 0                                        # Contador para o número de filhos do vértice 'u'
@@ -109,7 +178,8 @@ elif is_direcionado == "direcionado":
 else:
     raise ValueError("Tipo de grafo inválido")
 
-vertices = [[] for _ in range(quantidade_vertices)]     # Inicialização da lista de adjacências
+vertices = [[] for _ in range(quantidade_vertices)]                # Inicialização da lista de adjacências original
+vertices_with_weights = [[] for _ in range(quantidade_vertices)]   # Lista de adjacências com pesos para minTree
 
 # Leitura das arestas
 for _ in range(quantidade_arestas):
@@ -117,10 +187,17 @@ for _ in range(quantidade_arestas):
     id_aresta = int(aresta[0])                          # ID da aresta (não utilizado no momento)
     ligacao_v1 = int(aresta[1])
     ligacao_v2 = int(aresta[2])
-    # Adicionar a aresta ao grafo
+    peso = int(aresta[3])                               # Peso da aresta
+    
+    # Adicionar a aresta ao grafo no formato original (apenas vértices)
     vertices[ligacao_v1].append(ligacao_v2)
     if not is_direcionado:
         vertices[ligacao_v2].append(ligacao_v1)
+    
+    # Adicionar a aresta ao grafo no formato com pesos (vértice, peso)
+    vertices_with_weights[ligacao_v1].append((ligacao_v2, peso))
+    if not is_direcionado:
+        vertices_with_weights[ligacao_v2].append((ligacao_v1, peso))
 
 # Verificar se o grafo é conexo
 if verify_conexo(vertices, quantidade_vertices):
@@ -137,3 +214,7 @@ else:
 # Encontrar e imprimir os vértices de articulação
 articulations = list_joints(vertices, quantidade_vertices)
 print("Vértices de articulação:", articulations)
+
+# Gerar e imprimir a árvore mínima usando a nova estrutura com pesos
+min_tree = minTree(quantidade_vertices, vertices_with_weights, is_direcionado)
+print("Árvore mínima:", min_tree)
