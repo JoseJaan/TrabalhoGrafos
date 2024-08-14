@@ -1,5 +1,7 @@
 import copy # Para copiar Estruturas mutáveis
 
+funcoes = input().split()
+
 arestas_vertices = input().split()
 
 quantidade_vertices = int(arestas_vertices[0])
@@ -266,7 +268,6 @@ def dfsConexo(vertices):
             chave += 1
     return componentes
 
-componentes = list()
 
 def dfsFortementeConexo(vertices):
     tempo = 0
@@ -289,8 +290,10 @@ def dfsFortementeConexo(vertices):
             componentes.append([]) # Para cada rodada do DFS cria um componente
             tempo = dfsConexoVisita(vertice,tempo,componentes[chave])
             chave += 1
+    
+    for i,vertice in enumerate(vertices):
+        vertice["lista_adjacencia"] = lista_adjacencia[i]
 
-componentes = list()
 
 def dfsVisitaFecho(vertice,tempo):
     tempo += 1
@@ -414,26 +417,43 @@ def detecta_pontes(vertices):
 
     return pontes
 
-print(verify_cycle(lista_adjacencia))
-
-print(f"Euleriano: {is_euleriano(lista_adjacencia)}")
-
-# Verificar se o grafo é conexo
-if verify_conexo(lista_adjacencia, quantidade_vertices):
-    print("O grafo é conexo.")
-else:
-    print("O grafo não é conexo.")
-
-# Verificar se o grafo é bipartido
-if verify_bipartido(quantidade_vertices, lista_adjacencia):
-    print("O grafo é bipartido.")
-else:
-    print("O grafo não é bipartido.")
-
-# Encontrar e imprimir os vértices de articulação
-articulations = list_joints(lista_adjacencia, quantidade_vertices)
-print("Vértices de articulação:", articulations)
-
-# Gerar e imprimir a árvore mínima usando a nova estrutura com pesos
-min_tree = minTree(quantidade_vertices, lista_adjacencia_with_weights, is_direcionado)
-print("Árvore mínima:", min_tree)
+for x in funcoes:
+    if(x == "0"):
+        print(verify_conexo(lista_adjacencia,quantidade_vertices))
+    elif (x == "1"):
+        print(verify_bipartido(quantidade_vertices,lista_adjacencia))
+    elif (x == "2"):
+        print(is_euleriano(lista_adjacencia))
+    elif (x == "3"):
+        print(verify_cycle(lista_adjacencia))
+    elif (x == "4"):
+        dfsConexo(vertices)        
+        print(componentes)
+        componentes.clear()
+    elif (x == "5"):
+        dfsFortementeConexo(vertices)        
+        print(componentes)
+        componentes.clear()
+    elif(x == "6"):
+        print(list_joints(lista_adjacencia, quantidade_vertices))
+    elif(x == "7"):
+        print("ta dando erro em direcionados")
+        #print(detecta_pontes(lista_adjacencia))
+    elif(x == "8"):
+        print("nao tem")
+    elif(x == "9"):
+        print("nao tem")
+    elif(x == "10"):
+        print(minTree(quantidade_vertices, lista_adjacencia_with_weights, is_direcionado))
+    elif(x == "11"):
+        print(dfsOrdTop(vertices))
+        componentes.clear()
+    elif(x == "12"):
+        print("nao tem")
+    elif(x == "13"):
+        print("nao tem")
+    elif(x == "14"):
+        dfsFecho(vertices)
+        print(componentes)
+        componentes.clear()
+        

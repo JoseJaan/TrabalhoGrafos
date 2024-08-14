@@ -193,7 +193,7 @@ def dfsFecho(vertices):
 
 
 
-dfsFecho(vertices)
+dfsOrdTop(vertices)
     
 
 print(componentes)
