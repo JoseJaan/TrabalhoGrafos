@@ -12,14 +12,10 @@ if( is_direcionado == "nao_direcionado"):
 if(is_direcionado == "direcionado"):
     is_direcionado = True
 
-
 lista_adjacencia = [[] for _ in range(quantidade_vertices)] # Colocando todas as listas de adjacência dos vertices como vazia
 lista_adjacencia_with_weights = [[] for _ in range(quantidade_vertices)]   # Lista de adjacências com pesos para minTree
 
-
-
 # Colocando, para cada vértice, graus de entrada e saída como zero
-
 grau_entrada = [0 for _ in range(quantidade_vertices)] 
 grau_saida = [0 for _ in range(quantidade_vertices)]
 
@@ -28,7 +24,6 @@ arestas = list()
 # Lê todas as arestas dadas no terminal
 for x in range(quantidade_arestas):
     arestas.append(input())
-
 
 #   Criação da lista de adjacência
 #   O index de lista_adjacência representa cada vertice
@@ -46,7 +41,6 @@ for aresta in arestas:
     lista_adjacencia_with_weights[ligacao_v1].append((ligacao_v2, peso))
     if not is_direcionado:
         lista_adjacencia_with_weights[ligacao_v2].append((ligacao_v1, peso))
-
 
 # Função que realiza a busca em profundidade para verificar se o grafo é bipartido
 def dfs_bipartido(v, cores, adj_list):
@@ -107,10 +101,10 @@ def verify_conexo(adj_list, quantidade_vertices):
 
 # Função para encontrar a árvore mínima
 def minTree(quantidade_vertices, adj_list, is_direcionado):
-    if not is_direcionado:
-        return _kruskal_minTree_neg(quantidade_vertices, adj_list)
+    if is_direcionado:
+        return -1  # Retorna -1 para grafos direcionados
     else:
-        return _bellman_ford_minTree(quantidade_vertices, adj_list, 0)  # Raiz assumida como o vértice 0
+        return _kruskal_minTree_neg(quantidade_vertices, adj_list)
 
 # Função interna para Kruskal modificado (grafos não direcionados com pesos negativos)
 def _kruskal_minTree_neg(quantidade_vertices, adj_list):
@@ -141,38 +135,13 @@ def _kruskal_minTree_neg(quantidade_vertices, adj_list):
 
     edges.sort()
 
-    min_tree = []
+    min_tree_weight = 0  # Variável para armazenar a soma dos pesos da árvore mínima
     for weight, u, v in edges:
         if find(u) != find(v):
             union(u, v)
-            min_tree.append((u, v, weight))
+            min_tree_weight += weight
 
-    return min_tree
-
-# Função interna para Bellman-Ford (grafos direcionados com pesos negativos)
-def _bellman_ford_minTree(quantidade_vertices, adj_list, root):
-    distances = [float('inf')] * quantidade_vertices
-    pred = [-1] * quantidade_vertices
-    distances[root] = 0
-
-    for _ in range(quantidade_vertices - 1):
-        for u in range(quantidade_vertices):
-            for v, weight in adj_list[u]:
-                if distances[u] != float('inf') and distances[u] + weight < distances[v]:
-                    distances[v] = distances[u] + weight
-                    pred[v] = u
-
-    for u in range(quantidade_vertices):
-        for v, weight in adj_list[u]:
-            if distances[u] != float('inf') and distances[u] + weight < distances[v]:
-                raise ValueError("Grafo contém ciclo negativo.")
-
-    min_tree = []
-    for v in range(quantidade_vertices):
-        if v != root and pred[v] != -1:
-            min_tree.append((pred[v], v, distances[v] - distances[pred[v]]))
-
-    return min_tree
+    return min_tree_weight  # Retorna a soma dos pesos da árvore mínima
 
 # Função DFS para encontrar vértices de articulação
 def dfs_joints(u, parent, visited, discovery, low, articulation_points, time, adj_list):
@@ -213,8 +182,6 @@ def list_joints(adj_list, quantidade_vertices):
     
     return list(articulation_points)   
 
-
-
 def is_euleriano(lista_adjacencia):
 
     #if(not verify_conexo(quantidade_vertices,vertices)):
@@ -226,14 +193,10 @@ def is_euleriano(lista_adjacencia):
     
     return True # Caso todos sejam, retorna True
 
-
-
 vertices = list()
 
 for i in range(quantidade_vertices):
     vertices.append({"vertice":i,"cor": "branco", "filho": None, "tf":0, "ti":0, "lista_adjacencia": copy.deepcopy(lista_adjacencia[i])})
-
-
 
 def dfsVisita(vertice,tempo):
     tempo += 1
@@ -248,7 +211,6 @@ def dfsVisita(vertice,tempo):
     vertice["tf"] = tempo
 
     return tempo
-
 
 def dfs(vertices):
     for x in vertices:
@@ -272,9 +234,7 @@ def dfsOrdTop(vertices):
     ordenacao_topologica = [x["vertice"] for x in ordenacao]
     return ordenacao_topologica
 
-
 componentes = list()
-
 
 def dfsConexoVisita(vertice,tempo,componente):
     componente.append(vertice["vertice"])
@@ -291,7 +251,6 @@ def dfsConexoVisita(vertice,tempo,componente):
 
     return tempo
 
-
 def dfsConexo(vertices):
     tempo = 0
     chave = 0
@@ -306,7 +265,6 @@ def dfsConexo(vertices):
             dfsConexoVisita(vertice,tempo,componentes[chave])
             chave += 1
     return componentes
-
 
 componentes = list()
 
@@ -331,8 +289,6 @@ def dfsFortementeConexo(vertices):
             componentes.append([]) # Para cada rodada do DFS cria um componente
             tempo = dfsConexoVisita(vertice,tempo,componentes[chave])
             chave += 1
-
-
 
 componentes = list()
 
@@ -387,7 +343,6 @@ def trilha_euleriana(vertices):
 
     # retorna na ordem
     return trilha[::-1]
-
 
 def dfs_cycle(v, visitados, vertices, pai):
     #o vertice é marcado como visitado                            
