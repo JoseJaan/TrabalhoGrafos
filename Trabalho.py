@@ -417,6 +417,32 @@ def detecta_pontes(vertices):
 
     return pontes
 
+# Função para gerar a árvore de largura com prioridade lexicográfica
+def bfsLexi(quantidade_vertices, adj_list, arestas):
+    visited = [False] * quantidade_vertices  # Verificação de vértices visitados
+    fila = [0]  # Fila para a BFS, começando pelo vértice 0
+    visited[0] = True  # Marcar o vértice 0 como visitado
+    identificadores_arestas = []  # Armazenar os identificadores das arestas
+
+    while fila:
+        u = fila.pop(0)  # Remove o primeiro vértice da fila
+        # Explorar os vizinhos na ordem lexicográfica
+        for v in sorted(adj_list[u]):  # Ordenar os vizinhos lexicograficamente (já são inteiros)
+            if not visited[v]:
+                visited[v] = True
+                fila.append(v)
+                # Encontrar o identificador da aresta entre u e v
+                for aresta in arestas:
+                    aresta_info = aresta.split()
+                    id_aresta = int(aresta_info[0])
+                    ligacao_v1 = int(aresta_info[1])
+                    ligacao_v2 = int(aresta_info[2])
+                    if (ligacao_v1 == u and ligacao_v2 == v) or (ligacao_v1 == v and ligacao_v2 == u):
+                        identificadores_arestas.append(id_aresta)
+                        break
+
+    print(" ".join(map(str, identificadores_arestas)))
+
 for x in funcoes:
     if(x == "0"):
         print(verify_conexo(lista_adjacencia,quantidade_vertices))
@@ -442,7 +468,7 @@ for x in funcoes:
     elif(x == "8"):
         print("nao tem")
     elif(x == "9"):
-        print("nao tem")
+        print(bfsLexi(quantidade_vertices, lista_adjacencia, arestas)) #ktchau
     elif(x == "10"):
         print(minTree(quantidade_vertices, lista_adjacencia_with_weights, is_direcionado))
     elif(x == "11"):
@@ -456,4 +482,3 @@ for x in funcoes:
         dfsFecho(vertices)
         print(componentes)
         componentes.clear()
-        
