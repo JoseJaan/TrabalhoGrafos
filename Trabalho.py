@@ -515,7 +515,6 @@ def fluxo_maximo(quantidade_vertices, lista_adjacencia):
     
     return max_fluxo
 
-
 def dfsVisitaProf(vertice,tempo,grafo):
     tempo += 1
     vertice["ti"] = tempo
@@ -540,7 +539,6 @@ def dfsProf(vertices):
         x["tf"] = 0
     tempo = 0
     tempo = dfsVisitaProf(vertices[0],tempo,vertices)
-
 
 def arvoreProfundidade():
     vertices_teste = list()
@@ -613,8 +611,9 @@ for x in funcoes:
         for x in componentes:
             print(x, end=' ')
         componentes.clear()
+        print() 
     elif(x == "9"):
-        print(bfsLexi(quantidade_vertices, lista_adjacencia, arestas)) #ktchau
+        bfsLexi(quantidade_vertices, lista_adjacencia, arestas)  # Chame a função sem print
     elif(x == "10"):
         if(is_direcionado):
             print(-1)
