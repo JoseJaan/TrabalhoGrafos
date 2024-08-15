@@ -186,14 +186,14 @@ def list_joints(adj_list, quantidade_vertices):
 
 def is_euleriano(lista_adjacencia):
 
-    #if(not verify_conexo(quantidade_vertices,vertices)):
-        #return False
+    if(not verify_conexo(lista_adjacencia,quantidade_vertices)):
+        return 0
 
     for i in range(len(lista_adjacencia)):
         if(len(lista_adjacencia[i]) % 2 != 0): # Verifica se o grau do vértice é par
-            return False # caso o de um não seja, a função já retorna falso
+            return 0 # caso o de um não seja, a função já retorna falso
     
-    return True # Caso todos sejam, retorna True
+    return 1 # Caso todos sejam, retorna True
 
 vertices = list()
 
@@ -517,42 +517,76 @@ def fluxo_maximo(quantidade_vertices, lista_adjacencia):
 
 for x in funcoes:
     if(x == "0"):
-        print(verify_conexo(lista_adjacencia,quantidade_vertices))
+        if(verify_conexo(lista_adjacencia,quantidade_vertices)):
+            print(1)
+        else:
+            print(0)
     elif (x == "1"):
-        print(verify_bipartido(quantidade_vertices,lista_adjacencia))
+        if(is_direcionado):
+            print(0)
+        else:
+            print(verify_bipartido(quantidade_vertices,lista_adjacencia))
     elif (x == "2"):
         print(is_euleriano(lista_adjacencia))
     elif (x == "3"):
-        print(verify_cycle(lista_adjacencia,quantidade_vertices,is_direcionado))
+        if(verify_cycle(lista_adjacencia,quantidade_vertices,is_direcionado)):
+            print(1)
+        else:
+            print(0)
     elif (x == "4"):
-        dfsConexo(vertices)        
-        print(componentes)
-        componentes.clear()
+        if(is_direcionado):
+            print(-1)
+        else:
+            dfsConexo(vertices)        
+            print(len(componentes))
+            componentes.clear()
     elif (x == "5"):
-        dfsFortementeConexo(vertices)        
-        print(componentes)
-        componentes.clear()
+        if(is_direcionado):
+            dfsFortementeConexo(vertices)        
+            print(len(componentes))
+            componentes.clear()
+        else:
+            print(-1)
     elif(x == "6"):
-        print(list_joints(lista_adjacencia, quantidade_vertices))
+        if(is_direcionado):
+            print(-1)
+        else:
+            print(list_joints(lista_adjacencia, quantidade_vertices))
     elif(x == "7"):
-        print(detecta_pontes(lista_adjacencia))
+        if(is_direcionado):
+            print(-1)
+        else:
+            print(detecta_pontes(lista_adjacencia))
     elif(x == "8"):
         print("nao tem")
     elif(x == "9"):
         print(bfsLexi(quantidade_vertices, lista_adjacencia, arestas)) #ktchau
     elif(x == "10"):
-        print(minTree(quantidade_vertices, lista_adjacencia_with_weights, is_direcionado))
+        if(is_direcionado):
+            print(-1)
+        else:
+            print(minTree(quantidade_vertices, lista_adjacencia_with_weights, is_direcionado))
     elif(x == "11"):
-        print(dfsOrdTop(vertices))
-        componentes.clear()
+        if(is_direcionado and not verify_cycle(lista_adjacencia,quantidade_vertices,is_direcionado)):
+            print(dfsOrdTop(vertices))
+            componentes.clear()
+        else:
+            print(-1)
     elif(x == "12"):
         print("nao tem")
     elif(x == "13"):
-        fluxo_max = fluxo_maximo(quantidade_vertices,lista_adjacencia_with_weights)
-        print(fluxo_max)
+        if(is_direcionado):
+            fluxo_max = fluxo_maximo(quantidade_vertices,lista_adjacencia_with_weights)
+            print(fluxo_max)
+        else:
+            print(-1)
     elif(x == "14"):
-        dfsFecho(vertices)
-        print(componentes)
-        componentes.clear()
+        if(is_direcionado):
+            dfsFecho(vertices)
+            for x in componentes:
+                print(x, end=' ')
+            componentes.clear()
+        else:
+            print(-1)
 
 
