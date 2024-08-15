@@ -443,6 +443,68 @@ def bfsLexi(quantidade_vertices, adj_list, arestas):
 
     print(" ".join(map(str, identificadores_arestas)))
 
+#bfs adaptado para o fluxo maximo
+def bfs_fluxo_maximo(capacidade, fluxo, vertice_origem, vertice_destno, parent):
+    visitado = [False] * len(capacidade)
+    fila = [vertice_origem]
+    visitado[vertice_origem] = True
+    
+    while fila:
+        u = fila.pop(0)
+        
+        for v in range(len(capacidade[u])):
+            #se a aresta ainda tem capacidade
+            if not visitado[v] and capacidade[u][v] - fluxo[u][v] > 0:
+                parent[v] = u
+                if v == vertice_destno:
+                    return True
+                fila.append(v)
+                visitado[v] = True
+    
+    return False
+#baseado no algoritmo de Edmonds-Karp 
+def fluxo_maximo(quantidade_vertices, lista_adjacencia):
+    if not (is_direcionado):
+        return -1
+    
+    capacidade = [[0] * quantidade_vertices for _ in range(quantidade_vertices)]
+    fluxo = [[0] * quantidade_vertices for _ in range(quantidade_vertices)]
+    
+    #uma matriz com base na lista de adjacencia
+    for u in range(quantidade_vertices):
+        for v, cap in lista_adjacencia[u]:
+            capacidade[u][v] = cap
+    vertice_origem = 0
+    vertice_destino = quantidade_vertices - 1
+    parent = [-1] * quantidade_vertices
+    max_fluxo = 0
+    
+    #roda enquanto houver um caminho aumentante
+    while bfs_fluxo_maximo(capacidade, fluxo, vertice_origem, vertice_destino, parent):
+        #inicializa o caminho com um valor infinito, q será reduzido posteriormente
+        caminho_fluxo = float('inf')
+        v = vertice_destino
+        
+        #percorre do vertice destino até a origem
+        while v != vertice_origem:
+            u = parent[v]
+            #atualiza a variável com o menor valor encontrado pelo caminho
+            caminho_fluxo = min(caminho_fluxo, capacidade[u][v] - fluxo[u][v])
+            v = u
+        
+        #atualiza o fluxo nas arestas
+        v = vertice_destino
+        while v != vertice_origem:
+            u = parent[v]
+            fluxo[u][v] += caminho_fluxo
+            fluxo[v][u] -= caminho_fluxo
+            v = u
+        
+        #soma o fluxo encontrado no total
+        max_fluxo += caminho_fluxo
+    
+    return max_fluxo
+
 for x in funcoes:
     if(x == "0"):
         print(verify_conexo(lista_adjacencia,quantidade_vertices))
@@ -463,8 +525,7 @@ for x in funcoes:
     elif(x == "6"):
         print(list_joints(lista_adjacencia, quantidade_vertices))
     elif(x == "7"):
-        print("ta dando erro em direcionados")
-        #print(detecta_pontes(lista_adjacencia))
+        print(detecta_pontes(lista_adjacencia))
     elif(x == "8"):
         print("nao tem")
     elif(x == "9"):
@@ -477,7 +538,8 @@ for x in funcoes:
     elif(x == "12"):
         print("nao tem")
     elif(x == "13"):
-        print("nao tem")
+        fluxo_max = fluxo_maximo(quantidade_vertices,lista_adjacencia_with_weights)
+        print(fluxo_max)
     elif(x == "14"):
         dfsFecho(vertices)
         print(componentes)
