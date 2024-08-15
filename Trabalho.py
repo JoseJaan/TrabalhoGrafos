@@ -294,7 +294,6 @@ def dfsFortementeConexo(vertices):
     for i,vertice in enumerate(vertices):
         vertice["lista_adjacencia"] = lista_adjacencia[i]
 
-
 def dfsVisitaFecho(vertice,tempo):
     tempo += 1
     vertice["ti"] = tempo
@@ -347,25 +346,36 @@ def trilha_euleriana(vertices):
     # retorna na ordem
     return trilha[::-1]
 
-def dfs_cycle(v, visitados, vertices, pai):
-    #o vertice é marcado como visitado                            
-    visitados[v] = True                                    
-    for vizinho in vertices[v]:
-        #para cada vizinho roda o dfs                             
+def dfs_cycle(v, visitados, pilha_recursiva, lista_adjacencia, is_direcionado):
+    #o vertice é marcado como visitado e adicionado na pilha de recursão                          
+    visitados[v] = True
+    pilha_recursiva[v] = True
+                                        
+    for vizinho in lista_adjacencia[v]:
+        #para cada vizinho não visitado, executa a busca                             
         if not visitados[vizinho]:
-            if dfs_cycle(vizinho, visitados, vertices, v):
+            if dfs_cycle(vizinho, visitados, pilha_recursiva, lista_adjacencia, is_direcionado):
                 return True
-        #se o vizinho já visitado for o pai, não tem problema
-        elif vizinho != pai:
+        #se o vizinho está na lista de recursão, tem ciclo
+        elif pilha_recursiva[vizinho]:
             return True
+        #caso o grafo não seja direcionado e o vizinho ja foi visitado, mas não é pai
+        elif not is_direcionado and vizinho != v:
+            return True
+    #remove o vertice atual da pilha de recursão
+    pilha_recursiva[v] = False
     return False
 
-def verify_cycle(vertices):
-    visitados = [False] * (quantidade_vertices + 1)         
+def verify_cycle(lista_adjacencia, quantidade_vertices, is_direcionado):
+    visitados = [False] * (quantidade_vertices )
+    #a pilha armazena os vertices que foram visitados no percorrimento atual
+    #caso algum vertice da pilha seja encontrado, há um ciclo nesse percorrimento
+    pilha_recursiva = [False] * (quantidade_vertices )      
 
-    for v in range(1, quantidade_vertices + 1):           
+    #executa um dfs em cada vertice ainda nao visitado
+    for v in range(quantidade_vertices):           
         if not visitados[v]:
-            if dfs_cycle(v, visitados, vertices, -1): #inicial nao tem pai
+            if dfs_cycle(v, visitados, pilha_recursiva, lista_adjacencia, is_direcionado):
                 return True
         return False
     
@@ -513,7 +523,7 @@ for x in funcoes:
     elif (x == "2"):
         print(is_euleriano(lista_adjacencia))
     elif (x == "3"):
-        print(verify_cycle(lista_adjacencia))
+        print(verify_cycle(lista_adjacencia,quantidade_vertices,is_direcionado))
     elif (x == "4"):
         dfsConexo(vertices)        
         print(componentes)
@@ -544,3 +554,5 @@ for x in funcoes:
         dfsFecho(vertices)
         print(componentes)
         componentes.clear()
+
+
