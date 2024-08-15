@@ -515,6 +515,50 @@ def fluxo_maximo(quantidade_vertices, lista_adjacencia):
     
     return max_fluxo
 
+
+def dfsVisitaProf(vertice,tempo,grafo):
+    tempo += 1
+    vertice["ti"] = tempo
+    vertice["cor"] = "cinza"
+    for vizinho in vertice["lista_adjacencia"]:
+        for key,value in vizinho.items():
+            if grafo[value]["cor"] == "branco":
+                componentes.append(key)
+                vertice["filho"] = value
+                tempo = dfsVisitaProf(grafo[value],tempo,grafo);
+    vertice["cor"] = "preto"
+    tempo += 1
+    vertice["tf"] = tempo
+
+    return tempo
+
+def dfsProf(vertices):
+    for x in vertices:
+        x["cor"] = "branco"
+        x["filho"] = None
+        x["ti"] = 0
+        x["tf"] = 0
+    tempo = 0
+    tempo = dfsVisitaProf(vertices[0],tempo,vertices)
+
+
+def arvoreProfundidade():
+    vertices_teste = list()
+    lista_adjacencia_dict =  [[] for _ in range(quantidade_vertices)]
+
+    for aresta in arestas:
+        aresta = aresta.split()
+        id_aresta = int(aresta[0])
+        ligacao_v1 = int(aresta[1])
+        ligacao_v2 = int(aresta[2])
+        lista_adjacencia_dict[ligacao_v1].append({id_aresta:ligacao_v2})
+        if(not is_direcionado): # se o Grafo for não direcionado quer dizer que a ligação ocorre bidirecionalmente
+            lista_adjacencia_dict[ligacao_v2].append({id_aresta:ligacao_v1})
+
+    for i in range(quantidade_vertices):
+        vertices_teste.append({"vertice":i,"cor": "branco", "filho": None, "tf":0, "ti":0, "lista_adjacencia": lista_adjacencia_dict[i]})
+    dfsProf(vertices_teste)
+
 for x in funcoes:
     if(x == "0"):
         if(verify_conexo(lista_adjacencia,quantidade_vertices)):
@@ -525,7 +569,10 @@ for x in funcoes:
         if(is_direcionado):
             print(0)
         else:
-            print(verify_bipartido(quantidade_vertices,lista_adjacencia))
+            if(verify_bipartido(quantidade_vertices,lista_adjacencia)):
+                print(1)
+            else:
+                print(0)
     elif (x == "2"):
         print(is_euleriano(lista_adjacencia))
     elif (x == "3"):
@@ -551,14 +598,21 @@ for x in funcoes:
         if(is_direcionado):
             print(-1)
         else:
-            print(list_joints(lista_adjacencia, quantidade_vertices))
+            resposta = list_joints(lista_adjacencia, quantidade_vertices)
+            if(len(resposta) == 0):
+                print(0)
+            else:
+                print(resposta)
     elif(x == "7"):
         if(is_direcionado):
             print(-1)
         else:
             print(detecta_pontes(lista_adjacencia))
     elif(x == "8"):
-        print("nao tem")
+        arvoreProfundidade()
+        for x in componentes:
+            print(x, end=' ')
+        componentes.clear()
     elif(x == "9"):
         print(bfsLexi(quantidade_vertices, lista_adjacencia, arestas)) #ktchau
     elif(x == "10"):
