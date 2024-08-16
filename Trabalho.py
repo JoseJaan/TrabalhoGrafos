@@ -557,6 +557,57 @@ def arvoreProfundidade():
         vertices_teste.append({"vertice":i,"cor": "branco", "filho": None, "tf":0, "ti":0, "lista_adjacencia": lista_adjacencia_dict[i]})
     dfsProf(vertices_teste)
 
+def caminho_minimo(quantidade_vertices,lista_adjacencia_with_weights):
+    #Verifica se ao menos uma aresta possui um peso diferente das outras
+    peso_arestas = set()
+    for adjacentes in lista_adjacencia_with_weights:
+        for _, weight in adjacentes:
+            peso_arestas.add(weight)
+        if len(peso_arestas) > 1:
+            break
+        
+    if len(peso_arestas) <= 1:
+        return -1   
+    #So funciona para direcionados
+    if is_direcionado:
+        return -1
+    
+    vertice_inicio = 0
+    vertice_destino = quantidade_vertices - 1
+    
+    distancias = [float('inf')] * quantidade_vertices
+    distancias[vertice_inicio] = 0
+    
+    antecedentes = [None] * quantidade_vertices 
+    
+    nao_visitados = set(range(quantidade_vertices))
+    
+    while nao_visitados:
+        #Encontra o vertice nao visitado com a menor distancia
+        vertice_atual = min(nao_visitados, key=lambda v: distancias[v])
+        
+        #Se chegamos no destino ou a distancia é infinita
+        if vertice_atual == vertice_destino or distancias[vertice_atual] == float('inf'):
+            break
+        #Remove o vertice dos nao visitados 
+        nao_visitados.remove(vertice_atual)
+        
+        #Verifica os vizinhos
+        for vizinho, weight in lista_adjacencia_with_weights[vertice_atual]:
+            if vizinho in nao_visitados:
+                distancia = distancias[vertice_atual] + weight
+                
+                #Se encontramos um caminho menor, atualiza o valor
+                if(distancia < distancias[vizinho]):
+                    distancias[vizinho] = distancia
+                    antecedentes[vizinho] = vertice_atual
+    
+    #Se nao tem caminho para o destino
+    if distancias[vertice_destino] == float('inf'):
+        return -1
+    
+    return distancias[vertice_destino]  
+
 for x in funcoes:
     if(x == "0"):
         if(verify_conexo(lista_adjacencia,quantidade_vertices)):
@@ -615,7 +666,7 @@ for x in funcoes:
     elif(x == "9"):
         bfsLexi(quantidade_vertices, lista_adjacencia, arestas)  # Chame a função sem print
     elif(x == "10"):
-        if(is_direcionado):
+        if not (is_direcionado):
             print(-1)
         else:
             print(minTree(quantidade_vertices, lista_adjacencia_with_weights, is_direcionado))
@@ -626,7 +677,7 @@ for x in funcoes:
         else:
             print(-1)
     elif(x == "12"):
-        print("nao tem")
+        print(caminho_minimo(quantidade_vertices,lista_adjacencia_with_weights))
     elif(x == "13"):
         if(is_direcionado):
             fluxo_max = fluxo_maximo(quantidade_vertices,lista_adjacencia_with_weights)
