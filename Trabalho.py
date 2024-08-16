@@ -189,9 +189,14 @@ def is_euleriano(lista_adjacencia):
     if(not verify_conexo(lista_adjacencia,quantidade_vertices)):
         return 0
 
-    for i in range(len(lista_adjacencia)):
-        if(len(lista_adjacencia[i]) % 2 != 0): # Verifica se o grau do vértice é par
-            return 0 # caso o de um não seja, a função já retorna falso
+    if(not is_direcionado): # apenas verificar grau dos vertices
+        for i in range(len(lista_adjacencia)):
+            if(len(lista_adjacencia[i]) % 2 != 0): # Verifica se o grau do vértice é par
+                return 0 # caso o de um não seja, a função já retorna falso
+    else: # verificar entrada e saída
+        for i in range(len(lista_adjacencia)):
+            if(not(grau_entrada[i] == grau_saida[i])):
+                return 0
     
     return 1 # Caso todos sejam, retorna True
 
