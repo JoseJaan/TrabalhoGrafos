@@ -346,39 +346,30 @@ def trilha_euleriana(vertices):
     # retorna na ordem
     return trilha[::-1]
 
-def dfs_cycle(v, visitados, pilha_recursiva, lista_adjacencia, is_direcionado):
-    #o vertice é marcado como visitado e adicionado na pilha de recursão                          
+def dfs_cycle(v, parent, visitados, lista_adjacencia, is_direcionado):
+    #o vertice é marcado como visitado
     visitados[v] = True
-    pilha_recursiva[v] = True
-                                        
+    
     for vizinho in lista_adjacencia[v]:
-        #para cada vizinho não visitado, executa a busca                             
+        #para cada vizinho não visitado, executa a busca  
         if not visitados[vizinho]:
-            if dfs_cycle(vizinho, visitados, pilha_recursiva, lista_adjacencia, is_direcionado):
+            if dfs_cycle(vizinho, v, visitados, lista_adjacencia, is_direcionado):
                 return True
-        #se o vizinho está na lista de recursão, tem ciclo
-        elif pilha_recursiva[vizinho]:
+        elif vizinho != parent and (is_direcionado or vizinho != parent):
             return True
-        #caso o grafo não seja direcionado e o vizinho ja foi visitado, mas não é pai
-        elif not is_direcionado and vizinho != v:
-            return True
-    #remove o vertice atual da pilha de recursão
-    pilha_recursiva[v] = False
+    
     return False
 
 def verify_cycle(lista_adjacencia, quantidade_vertices, is_direcionado):
-    visitados = [False] * (quantidade_vertices )
-    #a pilha armazena os vertices que foram visitados no percorrimento atual
-    #caso algum vertice da pilha seja encontrado, há um ciclo nesse percorrimento
-    pilha_recursiva = [False] * (quantidade_vertices )      
-
-    #executa um dfs em cada vertice ainda nao visitado
-    for v in range(quantidade_vertices):           
-        if not visitados[v]:
-            if dfs_cycle(v, visitados, pilha_recursiva, lista_adjacencia, is_direcionado):
-                return True
-        return False
+    visitados = [False] * quantidade_vertices
     
+    #executa um dfs em cada vertice ainda nao visitado
+    for v in range(quantidade_vertices):
+        if not visitados[v]:
+            if dfs_cycle(v, -1, visitados, lista_adjacencia, is_direcionado):
+                return True
+    
+    return False
 def detecta_pontes(vertices):
     #Remove uma aresta
     #Verifica se continua conexo
@@ -666,7 +657,7 @@ for x in funcoes:
     elif(x == "9"):
         bfsLexi(quantidade_vertices, lista_adjacencia, arestas)  # Chame a função sem print
     elif(x == "10"):
-        if not (is_direcionado):
+        if (is_direcionado):
             print(-1)
         else:
             print(minTree(quantidade_vertices, lista_adjacencia_with_weights, is_direcionado))
