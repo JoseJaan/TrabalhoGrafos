@@ -387,6 +387,12 @@ def detecta_pontes(vertices):
         for vizinho in vertices[v]:
             if not visitados[vizinho]:
                 componente_conexa(vizinho, visitados, componente)
+                
+    def dfs_local(start, visitados, adj_list):
+        visitados[start] = True
+        for vizinho in adj_list[start]:
+            if not visitados[vizinho]:
+                dfs_local(vizinho, visitados, adj_list)
 
     pontes = []
 
@@ -394,7 +400,7 @@ def detecta_pontes(vertices):
     visitados = [False] * (quantidade_vertices)
     
     #Para cada componente do grafo, verifica as arestas dentro dela
-    for v in range(1, quantidade_vertices):
+    for v in range(quantidade_vertices):
         #Se o vértice não foi visitado, cria uma nova componente e visita os vértices dela
         if not visitados[v] and len(vertices[v]) > 0:
             componente = []
@@ -412,7 +418,7 @@ def detecta_pontes(vertices):
                     vertices[ligacao_v2].remove(ligacao_v1)
 
                     visitados_comp = [False] * (quantidade_vertices)
-                    dfs(componente[0], visitados_comp, vertices)
+                    dfs_local(componente[0], visitados_comp, vertices)
 
                     #Se algum vértice nao foi encontrado, a aresta removida é uma ponte
                     if any(not visitados_comp[u] for u in componente):
@@ -652,7 +658,10 @@ for x in funcoes:
         if(is_direcionado):
             print(-1)
         else:
-            print(detecta_pontes(lista_adjacencia))
+            if(len(detecta_pontes(lista_adjacencia)) == 0 ):
+                print(-1)
+            else:
+                print(len(detecta_pontes))
     elif(x == "8"):
         arvoreProfundidade()
         for x in componentes:
