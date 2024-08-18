@@ -661,7 +661,7 @@ for x in funcoes:
             if(len(detecta_pontes(lista_adjacencia)) == 0 ):
                 print(-1)
             else:
-                print(len(detecta_pontes))
+                print(len(detecta_pontes(lista_adjacencia)))
     elif(x == "8"):
         arvoreProfundidade()
         for x in componentes:
