@@ -193,7 +193,7 @@ def is_euleriano(lista_adjacencia):
         for i in range(len(lista_adjacencia)):
             if(len(lista_adjacencia[i]) % 2 != 0): # Verifica se o grau do vértice é par
                 return 0 # caso o de um não seja, a função já retorna falso
-    else: # verificar entrada e saída
+    else: # verificar entrada e saída caso for direcionado
         for i in range(len(lista_adjacencia)):
             if(not(grau_entrada[i] == grau_saida[i])):
                 return 0
@@ -202,43 +202,43 @@ def is_euleriano(lista_adjacencia):
 
 vertices = list()
 
-for i in range(quantidade_vertices):
+for i in range(quantidade_vertices): # Preparar grafo para o dfs, coloca todos os vertices com a cor branca e suas respectivas listas de adjacência
     vertices.append({"vertice":i,"cor": "branco", "filho": None, "tf":0, "ti":0, "lista_adjacencia": copy.deepcopy(lista_adjacencia[i])})
 
 def dfsVisita(vertice,tempo):
     tempo += 1
     vertice["ti"] = tempo
-    vertice["cor"] = "cinza"
-    for vizinho in vertice["lista_adjacencia"]:
-        if vertices[vizinho]["cor"] == "branco":
+    vertice["cor"] = "cinza" # Descoberto porém não explorado
+    for vizinho in vertice["lista_adjacencia"]: # Para vértice vizinho não visitado, executa a busca
+        if vertices[vizinho]["cor"] == "branco": # verifica se ainda não foi descoberto
             vertice["filho"] = vizinho
-            tempo = dfsVisita(vertices[vizinho],tempo);
-    vertice["cor"] = "preto"
+            tempo = dfsVisita(vertices[vizinho],tempo); # Faz a busca em profundidade no vértice não visitado
+    vertice["cor"] = "preto" # Marca que já foi visitado e explorado
     tempo += 1
     vertice["tf"] = tempo
 
     return tempo
 
 def dfs(vertices):
-    for x in vertices:
-        x["cor"] = "branco"
-        x["filho"] = None
-        x["ti"] = 0
+    for x in vertices: # Garante que o dicionário na python está nas condições desejadas, padrão
+        x["cor"] = "branco" # Não visitado
+        x["filho"] = None # Sem filho
+        x["ti"] = 0 # Tempos zerados
         x["tf"] = 0
     tempo = 0
-    for vertice in vertices:
-        if vertice["cor"] == "branco":
+    for vertice in vertices: # Visita todos os vertices do grafo 
+        if vertice["cor"] == "branco": 
             tempo = dfsVisita(vertice,tempo)
 
 def dfsOrdTop(vertices):
-    #if((not is_direcionado) and (not verify_cycle(vertices))):
-        #return []
+    if((not is_direcionado) and (not verify_cycle(vertices))): # Condições para realiazar a ordenação topológica
+        return -1
     tempo = 0
     for key,vertice in enumerate(vertices):
         if (vertice["cor"] == "branco") and (grau_entrada[key] == 0): #verifica se não tem arestas chegando
-            tempo = dfsVisita(vertice,tempo)
-    ordenacao = sorted(vertices, key=lambda vertice: vertice["tf"],reverse=True)
-    ordenacao_topologica = [x["vertice"] for x in ordenacao]
+            tempo = dfsVisita(vertice,tempo) # Faz o dfs marcando o tempo, final e inicial, isto é, tempo que foi descoberto e o tempo em que se voltou ao vértice
+    ordenacao = sorted(vertices, key=lambda vertice: vertice["tf"],reverse=True) # Ordena pelo maior tempo final
+    ordenacao_topologica = [x["vertice"] for x in ordenacao] # Pega os vertices
     return ordenacao_topologica
 
 componentes = list()
@@ -276,24 +276,24 @@ def dfsConexo(vertices):
 
 def dfsFortementeConexo(vertices):
     tempo = 0
-    dfs(vertices)
-    lista_adjacencia_invertida = [[] for _ in range(quantidade_vertices)]
-    for aresta in arestas:
+    dfs(vertices) # Faz o dfs normal
+    lista_adjacencia_invertida = [[] for _ in range(quantidade_vertices)] 
+    for aresta in arestas: # Cria uma lista de adjacência com as arestas invertidas
         aresta = aresta.split()
         ligacao_v1 = int(aresta[1]) 
         ligacao_v2 = int(aresta[2])
         lista_adjacencia_invertida[ligacao_v2].append(ligacao_v1)
-    for i,vertice in enumerate(vertices):
+    for i,vertice in enumerate(vertices): # Coloca todos os vértices como não descobertos
         vertice["cor"] = "branco"
-        vertice["lista_adjacencia"] = lista_adjacencia_invertida[i]
+        vertice["lista_adjacencia"] = lista_adjacencia_invertida[i] # coloca a lista de adjacência deles como a nova que é invertida
     
 
-    vertices = sorted(vertices, key=lambda vertice: vertice["tf"],reverse=True)
+    vertices = sorted(vertices, key=lambda vertice: vertice["tf"],reverse=True) # Ordena os vértices pelo tempo final
     chave = 0
     for vertice in vertices:
         if vertice["cor"] == "branco":
             componentes.append([]) # Para cada rodada do DFS cria um componente
-            tempo = dfsConexoVisita(vertice,tempo,componentes[chave])
+            tempo = dfsConexoVisita(vertice,tempo,componentes[chave]) # Faz novamente e a cada rodada é um componente novo
             chave += 1
     
     for i,vertice in enumerate(vertices):
@@ -314,7 +314,7 @@ def dfsVisitaFecho(vertice,tempo):
 
     return tempo
 
-def dfsFecho(vertices):
+def dfsFecho(vertices): # Apenas faz o dfs e armazena os componentes achados, começando do 0
     for x in vertices:
         x["cor"] = "branco"
         x["filho"] = None
@@ -521,12 +521,12 @@ def dfsVisitaProf(vertice,tempo,grafo):
     tempo += 1
     vertice["ti"] = tempo
     vertice["cor"] = "cinza"
-    for vizinho in vertice["lista_adjacencia"]:
+    for vizinho in vertice["lista_adjacencia"]: # Busca em profundidade para todos os vizinhos
         for key,value in vizinho.items():
             if grafo[value]["cor"] == "branco":
-                componentes.append(key)
+                componentes.append(key) # Descobriu um filho e adicionou
                 vertice["filho"] = value
-                tempo = dfsVisitaProf(grafo[value],tempo,grafo);
+                tempo = dfsVisitaProf(grafo[value],tempo,grafo); # visitou o filho
     vertice["cor"] = "preto"
     tempo += 1
     vertice["tf"] = tempo
@@ -540,7 +540,7 @@ def dfsProf(vertices):
         x["ti"] = 0
         x["tf"] = 0
     tempo = 0
-    tempo = dfsVisitaProf(vertices[0],tempo,vertices)
+    tempo = dfsVisitaProf(vertices[0],tempo,vertices) # Busca em profundidade partindo do 0
 
 def arvoreProfundidade():
     vertices_teste = list()
