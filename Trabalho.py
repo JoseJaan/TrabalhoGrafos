@@ -104,46 +104,46 @@ def verify_conexo(adj_list, quantidade_vertices):
 # Função para encontrar a árvore mínima
 def minTree(quantidade_vertices, adj_list, is_direcionado):
     if is_direcionado:
-        return -1  # Retorna -1 para grafos direcionados
+        return -1                                                        # Retorna -1 para grafos direcionados
     else:
-        return _kruskal_minTree_neg(quantidade_vertices, adj_list)
+        return _kruskal_minTree_neg(quantidade_vertices, adj_list)       # Chama a função Kruskal modificada para grafos não direcionados
 
 # Função interna para Kruskal modificado (grafos não direcionados com pesos negativos)
 def _kruskal_minTree_neg(quantidade_vertices, adj_list):
-    parent = list(range(quantidade_vertices))
-    rank = [0] * quantidade_vertices
+    parent = list(range(quantidade_vertices))                            # Inicializa o array 'parent' para o Union-Find
+    rank = [0] * quantidade_vertices                                     # Inicializa o array 'rank' para otimização do Union-Find
 
     def find(v):
         if parent[v] != v:
-            parent[v] = find(parent[v])
+            parent[v] = find(parent[v])                                  # Caminho compressão: otimiza a busca
         return parent[v]
 
     def union(v1, v2):
         root1 = find(v1)
         root2 = find(v2)
-        if root1 != root2:
+        if root1 != root2:                                               # Apenas une se forem de diferentes componentes
             if rank[root1] > rank[root2]:
-                parent[root2] = root1
+                parent[root2] = root1                                    # O nó com maior rank se torna o pai
             elif rank[root1] < rank[root2]:
-                parent[root1] = root2
+                parent[root1] = root2                                    # O nó com menor rank se torna o filho
             else:
-                parent[root2] = root1
+                parent[root2] = root1                                    # Se ambos têm o mesmo rank, escolha arbitrária e incremente o rank
                 rank[root1] += 1
 
     edges = []
     for u in range(quantidade_vertices):
         for v, weight in adj_list[u]:
-            edges.append((weight, u, v))
+            edges.append((weight, u, v))                                # Cria uma lista de arestas com seus respectivos pesos
 
-    edges.sort()
+    edges.sort()                                                        # Ordena as arestas pelo peso
 
-    min_tree_weight = 0  # Variável para armazenar a soma dos pesos da árvore mínima
+    min_tree_weight = 0                                                 # Variável para armazenar a soma dos pesos da árvore mínima
     for weight, u, v in edges:
-        if find(u) != find(v):
-            union(u, v)
-            min_tree_weight += weight
+        if find(u) != find(v):                                          # Verifica se os vértices pertencem a componentes diferentes
+            union(u, v)                                                 # Une as componentes
+            min_tree_weight += weight                                   # Adiciona o peso da aresta à soma total
 
-    return min_tree_weight  # Retorna a soma dos pesos da árvore mínima
+    return min_tree_weight                                              # Retorna a soma dos pesos da árvore mínima
 
 # Função DFS para encontrar vértices de articulação
 def dfs_joints(u, parent, visited, discovery, low, articulation_points, time, adj_list):
@@ -182,7 +182,7 @@ def list_joints(adj_list, quantidade_vertices):
         if not visited[i]:
             dfs_joints(i, parent, visited, discovery, low, articulation_points, time, adj_list)
     
-    return list(articulation_points)   
+    return list(articulation_points)                    # Retorna a lista de vértices de articulação
 
 def is_euleriano(lista_adjacencia):
 
@@ -272,7 +272,6 @@ def dfsConexo(vertices):
             dfsConexoVisita(vertice,tempo,componentes[chave])
             chave += 1
     return componentes
-
 
 def dfsFortementeConexo(vertices):
     tempo = 0
@@ -375,6 +374,7 @@ def verify_cycle(lista_adjacencia, quantidade_vertices, is_direcionado):
                 return True
     
     return False
+
 def detecta_pontes(vertices):
     #Remove uma aresta
     #Verifica se continua conexo
@@ -431,15 +431,15 @@ def detecta_pontes(vertices):
 
 # Função para gerar a árvore de largura com prioridade lexicográfica
 def bfsLexi(quantidade_vertices, adj_list, arestas):
-    visited = [False] * quantidade_vertices  # Verificação de vértices visitados
-    fila = [0]  # Fila para a BFS, começando pelo vértice 0
-    visited[0] = True  # Marcar o vértice 0 como visitado
-    identificadores_arestas = []  # Armazenar os identificadores das arestas
+    visited = [False] * quantidade_vertices                 # Verificação de vértices visitados
+    fila = [0]                                              # Fila para a BFS, começando pelo vértice 0
+    visited[0] = True                                       # Marcar o vértice 0 como visitado
+    identificadores_arestas = []                            # Armazenar os identificadores das arestas
 
     while fila:
-        u = fila.pop(0)  # Remove o primeiro vértice da fila
+        u = fila.pop(0)                                     # Remove o primeiro vértice da fila
         # Explorar os vizinhos na ordem lexicográfica
-        for v in sorted(adj_list[u]):  # Ordenar os vizinhos lexicograficamente (já são inteiros)
+        for v in sorted(adj_list[u]):                       # Ordenar os vizinhos lexicograficamente (já são inteiros)
             if not visited[v]:
                 visited[v] = True
                 fila.append(v)
@@ -453,7 +453,7 @@ def bfsLexi(quantidade_vertices, adj_list, arestas):
                         identificadores_arestas.append(id_aresta)
                         break
 
-    print(" ".join(map(str, identificadores_arestas)))
+    print(" ".join(map(str, identificadores_arestas)))      # Imprime os identificadores das arestas na ordem encontrada
 
 #bfs adaptado para o fluxo maximo
 def bfs_fluxo_maximo(capacidade, fluxo, vertice_origem, vertice_destno, parent):
@@ -474,6 +474,7 @@ def bfs_fluxo_maximo(capacidade, fluxo, vertice_origem, vertice_destno, parent):
                 visitado[v] = True
     
     return False
+
 #baseado no algoritmo de Edmonds-Karp 
 def fluxo_maximo(quantidade_vertices, lista_adjacencia):
     if not (is_direcionado):
